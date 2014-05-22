@@ -1,0 +1,34 @@
+# git ignore
+#.gitignore
+
+# Maven
+# log/
+target/
+*.class
+
+# eclipse
+.classpath
+.project
+.settings/
+
+# Intellij
+*.iml
+*.iws
+.idea/
+target/
+
+# Mac
+.DS_Store
+
+# Package Files
+*.jar
+*.war
+*.ear
+
+# flashbuilder
+.actionScriptProperties
+.flexProperties
+.project
+.settings/
+bin-debug/
+html-template/
