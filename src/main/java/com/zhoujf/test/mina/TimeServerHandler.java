@@ -23,11 +23,15 @@ public class TimeServerHandler extends IoHandlerAdapter {
 
         Date date = new Date();
         session.write(date.toString());
-        System.out.println("Message written...");
+        System.out.println("Message written...:" + str);
+        System.out.println(date.toString());
     }
 
     @Override
     public void sessionIdle(IoSession session, IdleStatus status) throws Exception {
         System.out.println("IDLE " + session.getIdleCount(status));
+        if(session.getIdleCount(status) == 5) {
+            session.close(false);
+        }
     }
 }

@@ -21,18 +21,9 @@
             <artifactId>mina-core</artifactId>
             <version>${version.mina}</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.mina</groupId>
-            <artifactId>mina-example</artifactId>
-            <version>${version.mina}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>org.apache.mina</artifactId>
-                    <groupId>bundle</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        
+        <!-- <dependency> <groupId>org.apache.mina</groupId> <artifactId>mina-example</artifactId> 
+            <version>${version.mina}</version> </dependency> -->
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -43,7 +34,7 @@
             <artifactId>slf4j-simple</artifactId>
             <version>1.7.7</version>
         </dependency>
-                
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -51,4 +42,46 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <finalName>${project.artifactId}</finalName>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>1.3</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <mainClass>com.zhoujf.test.mina.MinaTimeServer</mainClass>
+                </configuration>
+                
+                <!--
+                <configuration>
+                    <executable>java</executable>
+                    <arguments>
+                        <argument>-classpath</argument>
+                        <classpath/>
+                        <argument>com.zhoujf.test.mina.MinaTimeServer</argument>
+                    </arguments>
+                </configuration>
+                -->
+            </plugin>
+        </plugins>
+    </build>
 </project>
