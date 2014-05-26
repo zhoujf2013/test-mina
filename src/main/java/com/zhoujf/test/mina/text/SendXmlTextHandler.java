@@ -29,6 +29,12 @@ public class SendXmlTextHandler extends IoHandlerAdapter {
     }
     
     @Override
+    public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
+        super.exceptionCaught(session, cause);
+        session.close(true);
+    }
+    
+    @Override
     public void messageReceived(IoSession session, Object message) throws Exception {
         session.write(xml);
         print("messageReceived:" + session.getRemoteAddress());
@@ -36,7 +42,6 @@ public class SendXmlTextHandler extends IoHandlerAdapter {
     
     @Override
     public void messageSent(IoSession session, Object message) throws Exception {
-        // TODO Auto-generated method stub
         super.messageSent(session, message);
         print("messageSent");
         session.close(false);
@@ -44,14 +49,12 @@ public class SendXmlTextHandler extends IoHandlerAdapter {
     
     @Override
     public void sessionCreated(IoSession session) throws Exception {
-        // TODO Auto-generated method stub
         super.sessionCreated(session);
         print("sessionCreated");
     }
     
     @Override
     public void sessionClosed(IoSession session) throws Exception {
-        // TODO Auto-generated method stub
         super.sessionClosed(session);
         print("sessionClosed");
     }
@@ -64,10 +67,13 @@ public class SendXmlTextHandler extends IoHandlerAdapter {
     
     @Override
     public void sessionIdle(IoSession session, IdleStatus status) throws Exception {
-        // TODO Auto-generated method stub
         super.sessionIdle(session, status);
-        
         print("sessionIdle:" + session.getIdleCount(status));
+        
+        if(session.getIdleCount(status) == 10) {
+            session.close(false);
+        }
+        
     }
     
     public static void print(Object msg) {

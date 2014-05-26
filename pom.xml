@@ -21,8 +21,13 @@
             <artifactId>mina-core</artifactId>
             <version>${version.mina}</version>
         </dependency>
-        <!-- <dependency> <groupId>org.apache.mina</groupId> <artifactId>mina-example</artifactId> 
-            <version>${version.mina}</version> </dependency> -->
+        <!--
+        -->
+        <dependency>
+            <groupId>org.apache.mina</groupId>
+            <artifactId>mina-example</artifactId> 
+            <version>${version.mina}</version> 
+        </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>

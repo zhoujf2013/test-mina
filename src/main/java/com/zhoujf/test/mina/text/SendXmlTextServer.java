@@ -22,7 +22,7 @@ public class SendXmlTextServer {
 
         acceptor.setHandler(new SendXmlTextHandler());
         acceptor.getSessionConfig().setReadBufferSize(2048);
-        acceptor.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, 10);
+        acceptor.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, 3);
         acceptor.bind(new InetSocketAddress(PORT));
     }
 }
