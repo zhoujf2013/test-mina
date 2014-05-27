@@ -1,4 +1,4 @@
-test-lucene
+test-mina
 ===========
 
-test lucene
+test mina
