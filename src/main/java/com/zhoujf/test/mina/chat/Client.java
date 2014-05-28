@@ -15,7 +15,7 @@ import org.apache.mina.transport.socket.nio.NioSocketConnector;
 public class Client {
     
     private static final String HOSTNAME = "localhost";
-    private static final int PORT = 8001;
+    private static final int PORT = 8888;
     
     NioSocketConnector connector;
     
