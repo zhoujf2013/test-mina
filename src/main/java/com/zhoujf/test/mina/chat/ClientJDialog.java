@@ -11,7 +11,6 @@ import java.awt.event.WindowListener;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -29,9 +28,9 @@ import javax.swing.border.TitledBorder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ServerJFrame extends JFrame {
+public class ClientJDialog extends JDialog {
 
-    public static Logger logger = LoggerFactory.getLogger(ServerJFrame.class);
+    public static Logger logger = LoggerFactory.getLogger(ClientJDialog.class);
 
     private WindowListener wListener = new WindowAdapter() {
         @Override
@@ -45,7 +44,7 @@ public class ServerJFrame extends JFrame {
         }
     };
 
-    public ServerJFrame(){
+    public ClientJDialog(){
         /*try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException e) {
@@ -57,7 +56,7 @@ public class ServerJFrame extends JFrame {
         } catch (UnsupportedLookAndFeelException e) {
             e.printStackTrace();
         }*/
-        setTitle("服务器状态");
+        setTitle("客户端");
         setSize(400 , 300);
         setMinimumSize(new Dimension(400, 300));
         //setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -138,12 +137,10 @@ public class ServerJFrame extends JFrame {
     }
 
     public static void main(String[] args) {
-        JFrame.setDefaultLookAndFeelDecorated(true);
         JDialog.setDefaultLookAndFeelDecorated(true);
-        
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                new ServerJFrame();
+                new ClientJDialog();
             }
         });
     }
