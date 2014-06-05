@@ -4,8 +4,6 @@ import java.net.InetSocketAddress;
 import java.nio.charset.Charset;
 
 import org.apache.mina.core.future.ConnectFuture;
-import org.apache.mina.core.future.IoFuture;
-import org.apache.mina.core.future.IoFutureListener;
 import org.apache.mina.core.future.WriteFuture;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.codec.textline.TextLineCodecFactory;
@@ -33,7 +31,7 @@ public class Client {
         
         ConnectFuture future = connector.connect(new InetSocketAddress(HOSTNAME, PORT));
         future.awaitUninterruptibly();
-        WriteFuture writeFuture = future.getSession().write("aaaa");
+        WriteFuture writeFuture = future.getSession().write("open the door, i'm water");
         writeFuture.awaitUninterruptibly();
         future.getSession().close(true);
         connector.dispose();

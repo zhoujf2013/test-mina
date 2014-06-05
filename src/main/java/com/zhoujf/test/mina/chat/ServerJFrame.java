@@ -7,6 +7,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.charset.Charset;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -26,10 +29,23 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
+import org.apache.mina.core.session.IdleStatus;
+import org.apache.mina.core.session.IoSession;
+import org.apache.mina.filter.codec.ProtocolCodecFilter;
+import org.apache.mina.filter.codec.textline.TextLineCodecFactory;
+import org.apache.mina.filter.logging.LoggingFilter;
+import org.apache.mina.transport.socket.SocketSessionConfig;
+import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ServerJFrame extends JFrame {
+
+    private static final long serialVersionUID = 3574112566398495317L;
+    
+    public static int PORT = 8888;
+    
+    public static String PORT_KEY = "chat.port";
 
     public static Logger logger = LoggerFactory.getLogger(ServerJFrame.class);
 
@@ -46,19 +62,8 @@ public class ServerJFrame extends JFrame {
     };
 
     public ServerJFrame(){
-        /*try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (UnsupportedLookAndFeelException e) {
-            e.printStackTrace();
-        }*/
         setTitle("服务器状态");
-        setSize(400 , 300);
+        setSize(500 , 300);
         setMinimumSize(new Dimension(400, 300));
         //setDefaultCloseOperation(EXIT_ON_CLOSE);
         addWindowListener(wListener);
@@ -80,6 +85,13 @@ public class ServerJFrame extends JFrame {
         JMenuItem itemExit = mnuSys.add("退出(X)");
 
         itemStart.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                
+            }
+        });
+        
+        itemStop.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
 
@@ -105,7 +117,7 @@ public class ServerJFrame extends JFrame {
 
         JPanel pTop = new JPanel(new BorderLayout(5,0));
         pTop.setBorder(new CompoundBorder(new TitledBorder("输入信息"), new EmptyBorder(5,10,5,10)));
-        JTextField txtPort = new JTextField("8888");
+        txtPort = new JTextField("8888");
         JButton btnStart = new JButton("启动");
         btnStart.addActionListener(new ActionListener() {
             @Override
@@ -113,16 +125,18 @@ public class ServerJFrame extends JFrame {
                 JButton btn = (JButton)e.getSource();
                 if(btn.getText().equals("启动")){
                     btn.setText("停止");
+                    startServer();
                 } else {
                     btn.setText("启动");
                 }
             }
         });
 
-        JTextArea jtaLog = new JTextArea();
+        jtaLog = new JTextArea();
         jtaLog.setLineWrap(true);
-        JScrollPane scrollPane = new JScrollPane(jtaLog, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+        scrollPane = new JScrollPane(jtaLog, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setAutoscrolls(true);
         scrollPane.setBorder(BorderFactory.createTitledBorder("日志"));
 
         JLabel lblPort = new JLabel("端口号:");
@@ -136,6 +150,66 @@ public class ServerJFrame extends JFrame {
         contentPane.add(pTop, BorderLayout.NORTH);
         contentPane.add(scrollPane, BorderLayout.CENTER);
     }
+    
+    public void startServer(){
+        txtPort.setEditable(false);
+        
+        NioSocketAcceptor acceptor = new NioSocketAcceptor();
+        SocketSessionConfig ssc = acceptor.getSessionConfig();
+        ssc.setIdleTime(IdleStatus.BOTH_IDLE, 3);
+        
+        // 添加 filter
+        if(System.getProperty("chat.logging") != null) {
+            acceptor.getFilterChain().addLast("logging", new LoggingFilter());
+        }
+        acceptor.getFilterChain().addLast("codec", new ProtocolCodecFilter(new TextLineCodecFactory(Charset.forName("UTF-8"))));
+        acceptor.setHandler(new ServerIoHandler(new ServerCallback(){
+            @Override
+            public void callback(String message) {
+                jtaLog.append(message);
+                jtaLog.append("\n");
+            }
+
+            @Override
+            public void log(String message) {
+                jtaLog.append(message);
+                jtaLog.append("\n");
+            }
+
+            @Override
+            public void broadcast(String message) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void sendMessage(IoSession session, String message) {
+                // TODO Auto-generated method stub
+            }}
+        ));
+        
+        // 设置监听端口
+        int port = 8888;
+        try{
+            if(System.getProperty(PORT_KEY) != null) {
+                port = Integer.parseInt(System.getProperty(PORT_KEY));
+            }
+            acceptor.bind(new InetSocketAddress(port));
+            logger.info("服务器启动成功 port:{}", port);
+        } catch(IOException ex) {
+            logger.error("端口一杯占用  port:{}", port);
+            ex.printStackTrace();
+            System.exit(1);
+        } catch(Exception ex) {
+            logger.error("端口错误:{}", System.getProperty(PORT_KEY));
+            ex.printStackTrace();
+            System.exit(1);
+        }
+        jtaLog.append("服务器启动成功\n");
+    }
+    
+    public void stopServer(){
+        txtPort.setEditable(true);
+    }
 
     public static void main(String[] args) {
         JFrame.setDefaultLookAndFeelDecorated(true);
@@ -147,4 +221,8 @@ public class ServerJFrame extends JFrame {
             }
         });
     }
+    
+    private JTextField txtPort;
+    private JTextArea jtaLog;
+    private JScrollPane scrollPane;
 }

@@ -1,5 +1,6 @@
 package com.zhoujf.test.mina.chat;
 
+import java.net.SocketAddress;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,12 +15,24 @@ public class ServerIoHandler extends IoHandlerAdapter {
     
     public Logger logger = LoggerFactory.getLogger(getClass());
     
-    Map<String, Object> sessions = Collections.synchronizedMap(new HashMap<String, Object>());
+    Map<SocketAddress, Object> sessions = Collections.synchronizedMap(new HashMap<SocketAddress, Object>());
+    
+    private ServerCallback serverCallback;
+    
+    public ServerIoHandler(ServerCallback serverCallback) {
+        this.serverCallback = serverCallback;
+    }
 
     @Override
     public void sessionCreated(IoSession session) throws Exception {
         super.sessionCreated(session);
         logger.info("sessionCreated");
+        
+        sessions.put(session.getRemoteAddress(), session);
+        
+        
+        serverCallback.log(session.toString());
+        serverCallback.log(session.getRemoteAddress().toString());
     }
     
     @Override
@@ -44,6 +57,7 @@ public class ServerIoHandler extends IoHandlerAdapter {
     public void sessionClosed(IoSession session) throws Exception {
         logger.info("sessionClosed");
         session.close(true);
+        logout(session);
     }
     
     @Override
@@ -51,6 +65,7 @@ public class ServerIoHandler extends IoHandlerAdapter {
         if(session.getIdleCount(status) == 3) {
             session.close(false);
             logger.info("sessionIdle: {}", session.getIdleCount(status));
+            logout(session);
         }
     }
     
@@ -60,6 +75,12 @@ public class ServerIoHandler extends IoHandlerAdapter {
         logger.error("exceptionCaught");
         if(session != null && session.isClosing()) {
             session.close(false);
+            logout(session);
         }
+    }
+    
+    public void logout(IoSession session){
+        sessions.remove(session.getRemoteAddress());
+        serverCallback.log("退出: " + session.getRemoteAddress());
     }
 }

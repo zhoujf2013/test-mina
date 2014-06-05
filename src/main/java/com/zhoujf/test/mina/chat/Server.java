@@ -5,6 +5,7 @@ import java.net.InetSocketAddress;
 import java.nio.charset.Charset;
 
 import org.apache.mina.core.session.IdleStatus;
+import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.codec.textline.TextLineCodecFactory;
 import org.apache.mina.filter.logging.LoggingFilter;
@@ -32,7 +33,28 @@ public class Server {
             acceptor.getFilterChain().addLast("logging", new LoggingFilter());
         }
         acceptor.getFilterChain().addLast("codec", new ProtocolCodecFilter(new TextLineCodecFactory(Charset.forName("UTF-8"))));
-        acceptor.setHandler(new ServerIoHandler());
+        acceptor.setHandler(new ServerIoHandler(new ServerCallback() {
+            
+            @Override
+            public void sendMessage(IoSession session, String message) {
+                // TODO Auto-generated method stub
+            }
+            
+            @Override
+            public void log(String message) {
+                // TODO Auto-generated method stub
+            }
+            
+            @Override
+            public void callback(String message) {
+                // TODO Auto-generated method stub
+            }
+            
+            @Override
+            public void broadcast(String message) {
+                // TODO Auto-generated method stub
+            }
+        }));
         
         // 设置监听端口
         int port = PORT;
@@ -53,4 +75,5 @@ public class Server {
         
         logger.info("服务器启动成功 port:{}", port);
     }
+    
 }
