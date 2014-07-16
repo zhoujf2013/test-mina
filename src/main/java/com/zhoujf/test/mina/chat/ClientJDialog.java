@@ -11,6 +11,7 @@ import java.awt.event.WindowListener;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -28,7 +29,7 @@ import javax.swing.border.TitledBorder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ClientJDialog extends JDialog {
+public class ClientJDialog extends JFrame {
 
     public static Logger logger = LoggerFactory.getLogger(ClientJDialog.class);
 
@@ -45,17 +46,6 @@ public class ClientJDialog extends JDialog {
     };
 
     public ClientJDialog(){
-        /*try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (UnsupportedLookAndFeelException e) {
-            e.printStackTrace();
-        }*/
         setTitle("客户端");
         setSize(400 , 300);
         setMinimumSize(new Dimension(400, 300));
